@@ -45,6 +45,3 @@ docker network create vr-wedding_network
 
 echo "${bold}Command: ${command}${normal}"
 eval "$command"
-
-echo "${bold}Requesting certbot ...${normal}"
-./init-letsencrypt.sh
