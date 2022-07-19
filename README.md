@@ -24,9 +24,7 @@ List of service ports:
 - 80 : Frontend nginx
 - 3000 : CMS nginx
 - 8000 : Backend nginx
-- 5432 : Postgres
-- 3000 : NodeJS
-- 9229 : NodeJS 
+- 5432 : Postgres 
 
 However, you may change the service ports from `.env` 
     

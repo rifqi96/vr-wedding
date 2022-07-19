@@ -5,7 +5,7 @@ normal=$(tput sgr0)
 dockerUpCmd="docker-compose"
 dockerArgs=()
 isSudo=false
-dockerServices=(node-backend postgres node-cms node-frontend)
+dockerServices=(node-backend postgres node-cms node-frontend nginx)
 
 echo "${bold}Running ...${normal}"
 
@@ -43,8 +43,8 @@ fi
 # Create docker network if not exist
 docker network create vr-wedding_network
 
-# echo "${bold}Requesting certbot ...${normal}"
-# ./init-letsencrypt.sh
-
 echo "${bold}Command: ${command}${normal}"
 eval "$command"
+
+echo "${bold}Requesting certbot ...${normal}"
+./init-letsencrypt.sh
