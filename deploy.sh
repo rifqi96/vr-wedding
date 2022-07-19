@@ -19,4 +19,4 @@ echo "${bold}Starting up containers ...${normal}"
 ./start.sh -d --build
 
 # Auto prune image
-yes | npm image prune
+yes | docker image prune
