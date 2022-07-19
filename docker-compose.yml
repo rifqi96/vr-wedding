@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  # nodejs service for the main app
+  node-backend:
+    build:
+      context: ./backend
+      dockerfile: nodejs.Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV}
+        - BACKEND_PORT=${BACKEND_PORT}
+        - POSTGRES_PORT=${POSTGRES_PORT}
+    ports:
+      - ${BACKEND_PORT}:3000
+      - "9229:9229"
+    # Keeps refreshing changes happen inside src dir
+    volumes:
+      - './backend:/var/www'
+    # Environment vars for the App
+    env_file:
+      - .env
+    # Restart the server if it's crashing
+    restart: always
+    depends_on:
+      - postgres
+    container_name: 'node-backend'
+  # postgres service for db
+  postgres:
+    build:
+      context: ./backend
+      dockerfile: postgres.Dockerfile
+      args:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=${POSTGRES_DB}
+        - POSTGRES_PORT=${POSTGRES_PORT}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    restart: always
+    container_name: 'postgres'
+  node-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - FORCE_NPM_I=${FORCE_NPM_I}
+        - NODE_ENV=${NODE_ENV}
+        - FRONTEND_PORT=${FRONTEND_PORT}
+    ports:
+      - ${FRONTEND_PORT}:3001
+    # Keeps refreshing changes happen inside src dir
+    volumes:
+      - ./frontend:/var/www
+      - ./frontend/docker-etc/node/logs:/root/.pm2/logs
+    # Environment vars for the App
+    env_file:
+      - .env
+    # Restart the server if it's crashing
+    restart: always
+    container_name: 'node-frontend'
+  node-cms:
+    build:
+      context: ./cms
+      dockerfile: Dockerfile
+      args:
+        - FORCE_NPM_I=${FORCE_NPM_I}
+        - NODE_ENV=${NODE_ENV}
+        - CMS_PORT=${CMS_PORT}
+    ports:
+      - ${CMS_PORT}:3002
+    # Keeps refreshing changes happen inside src dir
+    volumes:
+      - ./cms:/var/www
+      - ./cms/docker-etc/node/logs:/root/.pm2/logs
+    # Environment vars for the App
+    env_file:
+      - .env
+    # Restart the server if it's crashing
+    restart: always
+    container_name: 'node-cms'
+networks:
+  default:
+    external:
+      name: vr-wedding_network
