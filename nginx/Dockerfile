@@ -15,10 +15,7 @@ RUN apk update && \
     apk add --no-cache \
     bash
 
-# Copy out app source code to the container
-ADD ./ ./
-
-COPY ${CONFDIR}/*.conf /etc/nginx/conf.d
+COPY ${CONFDIR}/*.conf /etc/nginx/conf.d/
 
 # Create nginx log dir
 RUN mkdir -p /var/log/nginx
