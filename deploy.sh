@@ -3,7 +3,7 @@ normal=$(tput sgr0)
 
 echo "${bold}Running ...${normal}"
 
-# Stop servers
+# Stop containers
 echo "${bold}Shutting down containers ...${normal}"
 ./stop.sh
 
@@ -14,6 +14,9 @@ git stash
 echo "${bold}Fetching from the repo ...${normal}"
 git pull origin main
 
-# Start servers
+# Start and rebuild containers
 echo "${bold}Starting up containers ...${normal}"
-./start.sh -d
+./start.sh -d --build
+
+# Auto prune image
+yes | npm image prune
