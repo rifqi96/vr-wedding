@@ -43,8 +43,8 @@ fi
 # Create docker network if not exist
 docker network create vr-wedding_network
 
-echo "${bold}Requesting certbot ...${normal}"
-./init-letsencrypt.sh
+# echo "${bold}Requesting certbot ...${normal}"
+# ./init-letsencrypt.sh
 
 echo "${bold}Command: ${command}${normal}"
 eval "$command"
