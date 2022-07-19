@@ -1,6 +1,6 @@
 FROM node:16.16-alpine3.15
 
-ENV PORT 3001
+ENV PORT 3000
 ENV WORKDIR /var/www
 ENV ETCDIR ./docker-etc/node
 

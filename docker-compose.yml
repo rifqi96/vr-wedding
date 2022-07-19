@@ -8,10 +8,7 @@ services:
       dockerfile: nodejs.Dockerfile
       args:
         - NODE_ENV=${NODE_ENV}
-        - BACKEND_PORT=${BACKEND_PORT}
-        - POSTGRES_PORT=${POSTGRES_PORT}
     ports:
-      - ${BACKEND_PORT}:3000
       - "9229:9229"
     # Keeps refreshing changes happen inside src dir
     volumes:
@@ -23,7 +20,7 @@ services:
     restart: always
     depends_on:
       - postgres
-    container_name: 'node-backend'
+    container_name: 'vr-node-backend'
   # postgres service for db
   postgres:
     build:
@@ -37,7 +34,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     restart: always
-    container_name: 'postgres'
+    container_name: 'vr-postgres'
   node-frontend:
     build:
       context: ./frontend
@@ -45,9 +42,6 @@ services:
       args:
         - FORCE_NPM_I=${FORCE_NPM_I}
         - NODE_ENV=${NODE_ENV}
-        - FRONTEND_PORT=${FRONTEND_PORT}
-    ports:
-      - ${FRONTEND_PORT}:3001
     # Keeps refreshing changes happen inside src dir
     volumes:
       - ./frontend:/var/www
@@ -57,7 +51,7 @@ services:
       - .env
     # Restart the server if it's crashing
     restart: always
-    container_name: 'node-frontend'
+    container_name: 'vr-node-frontend'
   node-cms:
     build:
       context: ./cms
@@ -65,9 +59,6 @@ services:
       args:
         - FORCE_NPM_I=${FORCE_NPM_I}
         - NODE_ENV=${NODE_ENV}
-        - CMS_PORT=${CMS_PORT}
-    ports:
-      - ${CMS_PORT}:3002
     # Keeps refreshing changes happen inside src dir
     volumes:
       - ./cms:/var/www
@@ -77,7 +68,38 @@ services:
       - .env
     # Restart the server if it's crashing
     restart: always
-    container_name: 'node-cms'
+    container_name: 'vr-node-cms'
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+      args:
+        - ENVIRONMENT=${NODE_ENV}
+        - BACKEND_PORT=${BACKEND_PORT}
+        - CMS_PORT=${CMS_PORT}
+        - FRONTEND_PORT=${FRONTEND_PORT}
+    ports:
+      - ${BACKEND_PORT}:8000
+      - ${CMS_PORT}:3000
+      - ${FRONTEND_PORT}:80
+      - 443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    container_name: 'vr-nginx'
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/logs:/var/log/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    container_name: 'vr-certbot'
+    depends_on:
+      - nginx
+      - node-backend
+      - node-cms
+      - node-frontend
 networks:
   default:
     external:

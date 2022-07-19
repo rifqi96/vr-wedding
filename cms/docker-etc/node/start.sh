@@ -4,10 +4,10 @@ npm install
 # Tail node
 # tail -f /dev/null
 
-# Run next
+# Run
 if [ "$APP_ENV" = "production" ]; then
   npm run build
-  pm2-runtime npm -- start
+  pm2-runtime npm -- start --omit=dev
 else
   pm2-runtime npm -- start
 fi

@@ -7,7 +7,7 @@ npm install
 # Run next
 if [ "$APP_ENV" = "production" ]; then
   npm run build
-  pm2-runtime npm -- start
+  pm2-runtime npm -- start --omit=dev
 else
   pm2-runtime npm -- start
 fi
