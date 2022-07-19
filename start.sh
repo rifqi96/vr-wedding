@@ -5,7 +5,7 @@ normal=$(tput sgr0)
 dockerUpCmd="docker-compose"
 dockerArgs=()
 isSudo=false
-dockerServices=(node-backend postgres node-cms node-frontend nginx)
+dockerServices=(node-backend postgres node-cms node-frontend nginx certbot)
 
 echo "${bold}Running ...${normal}"
 
