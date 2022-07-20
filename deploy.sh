@@ -6,15 +6,15 @@ branch="main"
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -branch branch_name"
-   echo -e "\t-branch The name of the branch. If it's left empty, it will use 'main' as the default."
+   echo "Usage: $0 -b branch_name"
+   echo -e "\t-b The name of the branch. If it's left empty, it will use 'main' as the default."
    exit 1 # Exit script after printing help
 }
 
-while getopts ":branch" opt
+while getopts ":b:" opt
 do
    case "$opt" in
-      branch ) branch="$OPTARG" ;;
+      b ) branch="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -36,7 +36,7 @@ echo "${bold}Shutting down containers ...${normal}"
 git stash
 
 # Fetch from the repo
-echo "${bold}Fetching from the repo ...${normal}"
+echo "${bold}Fetching from $branch ...${normal}"
 yes | git pull origin $branch
 
 # Start and rebuild containers
