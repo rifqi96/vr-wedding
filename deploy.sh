@@ -1,6 +1,31 @@
 bold=$(tput bold)
 normal=$(tput sgr0)
 
+branch="main"
+
+helpFunction()
+{
+   echo ""
+   echo "Usage: $0 -branch branch_name"
+   echo -e "\t-branch The name of the branch. If it's left empty, it will use 'main' as the default."
+   exit 1 # Exit script after printing help
+}
+
+while getopts ":branch" opt
+do
+   case "$opt" in
+      branch ) branch="$OPTARG" ;;
+      ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+   esac
+done
+
+# Print helpFunction in case parameters are empty
+# if [ -z "$parameterA" ] || [ -z "$parameterB" ] || [ -z "$parameterC" ]
+# then
+#    echo "Some or all of the parameters are empty";
+#    helpFunction
+# fi
+
 echo "${bold}Running ...${normal}"
 
 # Stop containers
@@ -12,7 +37,7 @@ git stash
 
 # Fetch from the repo
 echo "${bold}Fetching from the repo ...${normal}"
-git pull origin main
+yes | git pull origin $branch
 
 # Start and rebuild containers
 echo "${bold}Starting up containers ...${normal}"

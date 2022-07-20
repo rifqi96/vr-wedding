@@ -1,15 +1,21 @@
 #!/bin/bash
+source .env
 
 if ! [ -x "$(command -v docker-compose)" ]; then
   echo 'Error: docker-compose is not installed.' >&2
   exit 1
 fi
 
-domains=(thevrwedding.com www.thevrwedding.com)
+domains=(${CERTBOT_DOMAINS})
 rsa_key_size=4096
 data_path="./nginx/certbot"
-email="rifqi96@yahoo.com" # Adding a valid address is strongly recommended
-staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+email=${CERTBOT_EMAIL} # Adding a valid address is strongly recommended
+staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+
+# Don't set staging status if not in production
+if [[ "$NODE_ENV" = "production" ]]; then
+  staging=0
+fi
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
