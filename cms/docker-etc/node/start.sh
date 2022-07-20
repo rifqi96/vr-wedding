@@ -4,11 +4,12 @@ npm install
 # Tail node
 # tail -f /dev/null
 
-# Run
+# Run server
 if [ "$NODE_ENV" = "production" ]; then
   npm run build
-  npm install -g serve
-  pm2-runtime serve -s build -l 3000
+  npm install -location=global serve
+  serve -s build -l 3000
 else
+  npm install --location=global pm2
   pm2-runtime npm -- start
 fi
