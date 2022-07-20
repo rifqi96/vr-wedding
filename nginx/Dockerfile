@@ -27,7 +27,7 @@ RUN rm -rf ${CONFDIR}/*
 
 # Override the default.conf nginx file
 RUN if [[ $ENVIRONMENT = "production" ]] || [[ $ENVIRONMENT = "staging" ]]; \
-        then cp ${CONFTMPLDIR}/* ${CONFDIR}/ \
+        then cp ${CONFTMPLDIR}/* ${CONFDIR}/ &&\
         rm -rf ${CONFDIR}/*.local.conf ;\
     else \
         cp ${CONFTMPLDIR}/*.local.conf ${CONFDIR}/ ;\
