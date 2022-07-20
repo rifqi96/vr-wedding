@@ -87,6 +87,10 @@ services:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
     container_name: 'vr-nginx'
+    depends_on:
+      - node-backend
+      - node-cms
+      - node-frontend
   certbot:
     image: certbot/certbot
     restart: unless-stopped
@@ -98,9 +102,6 @@ services:
     container_name: 'vr-certbot'
     depends_on:
       - nginx
-      - node-backend
-      - node-cms
-      - node-frontend
 networks:
   default:
     external:
