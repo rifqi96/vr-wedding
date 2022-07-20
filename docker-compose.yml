@@ -12,7 +12,8 @@ services:
       - "9229:9229"
     # Keeps refreshing changes happen inside src dir
     volumes:
-      - './backend:/var/www'
+      - ./backend:/var/www
+      - /var/www/node_modules
     # Environment vars for the App
     env_file:
       - .env
@@ -45,6 +46,7 @@ services:
     # Keeps refreshing changes happen inside src dir
     volumes:
       - ./frontend:/var/www
+      - /var/www/node_modules
       - ./frontend/docker-etc/node/logs:/root/.pm2/logs
     # Environment vars for the App
     env_file:
@@ -62,6 +64,7 @@ services:
     # Keeps refreshing changes happen inside src dir
     volumes:
       - ./cms:/var/www
+      - /var/www/node_modules
       - ./cms/docker-etc/node/logs:/root/.pm2/logs
     # Environment vars for the App
     env_file:

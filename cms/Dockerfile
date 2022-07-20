@@ -17,7 +17,7 @@ RUN apk update && \
 ADD ./ ./
 
 # Install PM2 globally
-RUN npm install --global pm2
+RUN npm install --location=global pm2
 
 # Copy start.sh script
 COPY ${ETCDIR}/start.sh /var/scripts/start.sh

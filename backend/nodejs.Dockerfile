@@ -19,7 +19,7 @@ RUN chmod +x /var/scripts/start.sh
 ADD ./ ./
 
 # Install PM2 globally
-RUN npm install --global pm2
+RUN npm install --location=global pm2
 
 # Expose nodejs ports
 EXPOSE 3000 9229
