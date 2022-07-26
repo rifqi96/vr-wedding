@@ -15,6 +15,34 @@ echo "${bold}Running ...${normal}"
 # Copy the env file if doesn't exist
 cp -n .env.example .env
 
+# Use options
+helpFunction()
+{
+   echo ""
+   echo "Usage: $0 [-d] [--build] [--force-i] [-s docker_service(s)]"
+   echo -e "\t-d docker-compose detach: runs containers in background."
+   echo -e "\t--build re-build everything if changes detected."
+   echo -e "\t--force-i Force set FORCE_COMPOSER_INSTALL to true."
+   echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
+   echo -e "\t-h Display help"
+   exit 1 # Exit script after printing help
+}
+
+while getopts ":dhs:" opt
+do
+   case "$opt" in
+      d ) isD=true ;;
+      s ) dockerServices=($OPTARG) ;;
+      h ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+   esac
+done
+
+# Apply opt values
+# Apply dockerArgs
+if [[ $isD = true ]]; then
+  dockerArgs+=('-d')
+fi
+
 if [[ $NODE_ENV = "prod" ]] || [[ $NODE_ENV = "production" ]] || [[ $NODE_ENV = "staging" ]]; then
   echo "${bold}Running production${normal}"
   # Merge with docker-compose.prod.yml
@@ -31,9 +59,6 @@ do
   # re-build everything if changes detected
   if [[ "$arg" = "--build" ]]; then
     dockerArgs+=('--build')
-  # docker-compose detach: runs containers in background
-  elif [[ "$arg" = "-d" ]]; then
-    dockerArgs+=('-d')
   # Force set FORCE_NPM_I to true
   elif [ "$arg" == "--npm-i" ] || [[ "$arg" = "--force-i" ]]; then
     grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env

@@ -2,19 +2,23 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 
 branch="main"
+additionalStartOptions=()
+dockerServices=""
 
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -b branch_name"
+   echo "Usage: $0 -b branch_name -s docker_service(s)"
    echo -e "\t-b The name of the branch. If it's left empty, it will use 'main' as the default."
+   echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
    exit 1 # Exit script after printing help
 }
 
-while getopts ":b:" opt
+while getopts ":b:s:" opt
 do
    case "$opt" in
       b ) branch="$OPTARG" ;;
+      s ) dockerServices="$OPTARG" ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -41,7 +45,12 @@ yes | git pull origin $branch
 
 # Start and rebuild containers
 echo "${bold}Starting up containers ...${normal}"
-./start.sh -d --build
+if [ ! -z "$dockerServices" ]; then
+   additionalStartOptions+=("-s \"$dockerServices\"")
+fi
+startCommand="./start.sh -d --build ${additionalStartOptions[@]}"
+echo "${bold}Start command: ${startCommand}${normal}"
+eval "$startCommand"
 
 # Auto prune image
 yes | docker image prune
