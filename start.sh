@@ -1,3 +1,6 @@
+#!/bin/bash
+source .env
+
 bold=$(tput bold)
 normal=$(tput sgr0)
 
@@ -11,6 +14,16 @@ echo "${bold}Running ...${normal}"
 
 # Copy the env file if doesn't exist
 cp -n .env.example .env
+
+if [[ $NODE_ENV = "prod" ]] || [[ $NODE_ENV = "production" ]] || [[ $NODE_ENV = "staging" ]]; then
+  echo "${bold}Running production${normal}"
+  # Merge with docker-compose.prod.yml
+  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.prod.yml"
+else
+  echo "${bold}Running local${normal}"
+  # Merge with docker-compose.local.yml
+  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.local.yml"
+fi
 
 # Check for additional parameters
 for arg in "$@"
