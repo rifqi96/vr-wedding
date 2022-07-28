@@ -2,6 +2,9 @@ version: '3'
 
 services:
   nginx:
+    build:
+      args:
+        - SSL_INSTALL=${SSL_INSTALL}
     ports:
       - ${APP_PORT}:80
       - 443:443
