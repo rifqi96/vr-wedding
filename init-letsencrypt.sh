@@ -69,9 +69,11 @@ for domain in "${domains[@]}"; do
 done
 
 # Add in wildcard domain validation to use TXT
-wildcard_args=""
+authenticator_args=""
 if [ $WILDCARD_DOMAIN = true ]; then
-  wildcard_args="--manual --preferred-challenges=dns --server https://acme-v02.api.letsencrypt.org/directory"
+  authenticator_args="--manual --preferred-challenges=dns --server https://acme-v02.api.letsencrypt.org/directory"
+else
+  authenticator_args="--webroot -w /var/www/certbot"
 fi
 
 # Select appropriate email arg
@@ -84,11 +86,11 @@ esac
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
 certonly_cmd="\
-  certbot certonly --webroot -w /var/www/certbot \
+  certbot certonly \
+    $authenticator_args \
     $staging_arg \
     $email_arg \
     $domain_args \
-    $wildcard_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
     --force-renewal
