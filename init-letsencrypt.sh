@@ -63,7 +63,7 @@ domain_args=""
 for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
   # Check for wildcard domain
-  if [ $WILDCARD_DOMAIN = false ] && [ "$domain" == *"*."* ]; then
+  if [ $WILDCARD_DOMAIN = false ] && [[ "$domain" == *"*."* ]]; then
     WILDCARD_DOMAIN=true
   fi
 done
