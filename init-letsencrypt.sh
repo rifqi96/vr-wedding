@@ -71,7 +71,7 @@ done
 # Add in wildcard domain validation to use TXT
 wildcard_args=""
 if [ $WILDCARD_DOMAIN = true ]; then
-  $wildcard_args="--manual --preferred-challenges=dns --server https://acme-v02.api.letsencrypt.org/directory"
+  wildcard_args="--manual --preferred-challenges=dns --server https://acme-v02.api.letsencrypt.org/directory"
 fi
 
 # Select appropriate email arg
@@ -83,7 +83,7 @@ esac
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
-docker-compose run --rm --entrypoint "\
+certonly_cmd="\
   certbot certonly --webroot -w /var/www/certbot \
     $staging_arg \
     $email_arg \
@@ -91,7 +91,11 @@ docker-compose run --rm --entrypoint "\
     $wildcard_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
-    --force-renewal" certbot
+    --force-renewal
+"
+
+echo "Running $certonly_cmd"
+docker-compose run --rm --entrypoint $certonly_cmd certbot
 echo
 
 echo "### Reloading nginx ..."
