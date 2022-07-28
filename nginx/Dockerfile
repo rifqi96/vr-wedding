@@ -29,7 +29,7 @@ RUN rm -rf ${CONFDIR}/*
 
 # Override the default.conf nginx file
 RUN if [[ $SSL_INSTALL = true ]]; then \
-        cp ${CONFTMPLDIR}/*.temp.conf ;\
+        cp ${CONFTMPLDIR}/*.temp.conf ${CONFDIR}/ ;\
     elif [[ $ENVIRONMENT = "production" ]] || [[ $ENVIRONMENT = "staging" ]]; then \
         cp ${CONFTMPLDIR}/* ${CONFDIR}/ && \
         rm -rf ${CONFDIR}/*.local.conf ;\
