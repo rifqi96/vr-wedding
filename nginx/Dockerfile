@@ -29,6 +29,8 @@ RUN rm -rf ${CONFDIR}/*
 RUN if [[ $ENVIRONMENT = "production" ]] || [[ $ENVIRONMENT = "staging" ]]; \
         then cp ${CONFTMPLDIR}/* ${CONFDIR}/ && \
         rm -rf ${CONFDIR}/*.local.conf ;\
+    elif [[ $SSL_INSTALL = true ]]; \
+        then cp ${CONFTMPLDIR}/*.temp.conf ;\
     else \
         cp ${CONFTMPLDIR}/*.local.conf ${CONFDIR}/ ;\
     fi

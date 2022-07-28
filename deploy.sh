@@ -4,6 +4,7 @@ normal=$(tput sgr0)
 branch="main"
 additionalStartOptions=()
 dockerServices=""
+SSL_INSTALL=false
 
 helpFunction()
 {
@@ -11,6 +12,7 @@ helpFunction()
    echo "Usage: $0 -b branch_name -s docker_service(s)"
    echo -e "\t-b The name of the branch. If it's left empty, it will use 'main' as the default."
    echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
+   echo -e "\t--ssl-i Install SSL mode."
    exit 1 # Exit script after printing help
 }
 
@@ -30,6 +32,14 @@ done
 #    helpFunction
 # fi
 
+# Check for additional parameters
+for arg in "$@"
+do
+  if [[ "$arg" = "--ssl-i" ]]; then
+      SSL_INSTALL=true
+  fi
+done
+
 echo "${bold}Running ...${normal}"
 
 # Stop containers
@@ -47,6 +57,8 @@ yes | git pull origin $branch
 echo "${bold}Starting up containers ...${normal}"
 if [ ! -z "$dockerServices" ]; then
    additionalStartOptions+=("-s \"$dockerServices\"")
+elif [ SSL_INSTALL = true ]; then
+   additionalStartOptions+=("--ssl-i")
 fi
 startCommand="./start.sh -d --build ${additionalStartOptions[@]}"
 echo "${bold}Start command: ${startCommand}${normal}"

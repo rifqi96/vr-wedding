@@ -21,9 +21,10 @@ helpFunction()
    echo ""
    echo "Usage: $0 [-d] [--build] [--force-i] [-s docker_service(s)]"
    echo -e "\t-d docker-compose detach: runs containers in background."
+   echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
    echo -e "\t--build re-build everything if changes detected."
    echo -e "\t--force-i Force set FORCE_COMPOSER_INSTALL to true."
-   echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
+   echo -e "\t--ssl-i Install SSL mode."
    echo -e "\t-h Display help"
    exit 1 # Exit script after printing help
 }
@@ -64,6 +65,8 @@ do
     grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env
   elif [[ "$arg" = "--sudo" ]]; then
     isSudo=true
+  elif [[ "$arg" = "--ssl-i" ]]; then
+    export SSL_INSTALL=true
   fi
 done
 
