@@ -63,14 +63,13 @@ do
   esac
 done
 
-if [[ $NODE_ENV = "prod" ]] || [[ $NODE_ENV = "production" ]] || [[ $NODE_ENV = "staging" ]]; then
-  if [ $SSL_INSTALL = true ]; then
-    dockerUpCmd+=" -f docker-compose.yml -f docker-compose.ssl.yml"
-  else
-    echo "${bold}Running production${normal}"
-    # Merge with docker-compose.prod.yml
-    dockerUpCmd+=" -f docker-compose.yml -f docker-compose.prod.yml"
-  fi
+if [ $SSL_INSTALL = true ]; then
+  echo "${bold}Running ssl install mode${normal}"
+  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.ssl.yml"
+elif [[ $NODE_ENV = "prod" ]] || [[ $NODE_ENV = "production" ]] || [[ $NODE_ENV = "staging" ]]; then
+  echo "${bold}Running production${normal}"
+  # Merge with docker-compose.prod.yml
+  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.prod.yml"
 else
   echo "${bold}Running local${normal}"
   # Merge with docker-compose.local.yml

@@ -28,13 +28,11 @@ RUN mkdir -p /var/log/nginx
 RUN rm -rf ${CONFDIR}/*
 
 # Override the default.conf nginx file
-RUN if [[ $ENVIRONMENT = "production" ]] || [[ $ENVIRONMENT = "staging" ]]; then \
-        if [[ $SSL_INSTALL = true ]]; then \
-            cp ${CONFTMPLDIR}/*.temp.conf ;\
-        else \
-            cp ${CONFTMPLDIR}/* ${CONFDIR}/ && \
-            rm -rf ${CONFDIR}/*.local.conf ;\
-        fi \
+RUN if [[ $SSL_INSTALL = true ]]; then \
+        cp ${CONFTMPLDIR}/*.temp.conf ;\
+    elif [[ $ENVIRONMENT = "production" ]] || [[ $ENVIRONMENT = "staging" ]]; then \
+        cp ${CONFTMPLDIR}/* ${CONFDIR}/ && \
+        rm -rf ${CONFDIR}/*.local.conf ;\
     else \
         cp ${CONFTMPLDIR}/*.local.conf ${CONFDIR}/ ;\
     fi
