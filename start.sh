@@ -87,5 +87,4 @@ fi
 docker network create vr-wedding_network
 
 echo "${bold}Command: ${command}${normal}"
-exit 0
 eval "$command"
