@@ -16,12 +16,12 @@ helpFunction()
    exit 1 # Exit script after printing help
 }
 
-while getopts ":b:s:" opt
+while getopts ":hb:s:" opt
 do
    case "$opt" in
       b ) branch="$OPTARG" ;;
       s ) dockerServices="$OPTARG" ;;
-      ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+      h ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
 
