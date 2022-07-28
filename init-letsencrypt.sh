@@ -69,7 +69,7 @@ for domain in "${domains[@]}"; do
 done
 
 # Add in wildcard domain validation to use TXT
-$wildcard_args=""
+wildcard_args=""
 if [ $WILDCARD_DOMAIN = true ];
   $wildcard_args="--manual --preferred-challenges=dns --server https://acme-v02.api.letsencrypt.org/directory"
 fi
