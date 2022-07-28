@@ -20,13 +20,14 @@ cp -n .env.example .env
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 [-d] [--build] [--force-i] [-s docker_service(s)]"
+   echo "Usage: $0 [-d] [-s docker_service(s)] [-o options]"
    echo -e "\t-d docker-compose detach: runs containers in background."
    echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
-   echo -e "\t--build re-build everything if changes detected."
-   echo -e "\t--force-i Force set FORCE_COMPOSER_INSTALL to true."
    echo -e "\t-o Options:"
-   echo -e "\t\t ssl \tInstall SSL mode."
+   echo -e "\t\t build \tre-build everything if changes detected."
+   echo -e "\t\t ssl-i \tInstall SSL mode."
+   echo -e "\t\t force-i \tForce set FORCE_COMPOSER_INSTALL to true."
+   echo -e "\t\t sudo \tRun as superuser."
    echo -e "\t-h Display help"
    exit 1 # Exit script after printing help
 }
@@ -57,27 +58,19 @@ else
   dockerUpCmd+=" -f docker-compose.yml -f docker-compose.local.yml"
 fi
 
-# Check for additional parameters
-for arg in "$@"
-do
-  # re-build everything if changes detected
-  if [[ "$arg" = "--build" ]]; then
-    dockerArgs+=('--build')
-  # Force set FORCE_NPM_I to true
-  elif [ "$arg" == "--npm-i" ] || [[ "$arg" = "--force-i" ]]; then
-    grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env
-  elif [[ "$arg" = "--sudo" ]]; then
-    isSudo=true
-  fi
-done
-
 # Check for options
-case "$options" in
-  *ssl* ) export SSL_INSTALL=true ;;
-  * )
-    echo "No valid options"
-    helpFunction ;;
-esac
+for arg in "${options[@]}"
+do
+  case "$arg" in
+    *build* ) dockerArgs+=('--build') ;;
+    *force-i* ) grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env ;;
+    *sudo* ) isSudo=true ;;
+    *ssl-i* ) export SSL_INSTALL=true ;;
+    ? )
+      echo "No valid options"
+      helpFunction ;;
+  esac
+done
 
 # add 'up' to docker-compose command
 dockerUpCmd+=" up"
@@ -94,4 +87,5 @@ fi
 docker network create vr-wedding_network
 
 echo "${bold}Command: ${command}${normal}"
+exit 0
 eval "$command"

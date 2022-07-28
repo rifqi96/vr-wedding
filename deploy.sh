@@ -42,21 +42,24 @@ echo "${bold}Shutting down containers ...${normal}"
 ./stop.sh
 
 # Make sure no conflicting files
-git stash
+# git stash
 
 # Fetch from the repo
 echo "${bold}Fetching from $branch ...${normal}"
-yes | git pull origin $branch
+# yes | git pull origin $branch
 
 # Start and rebuild containers
 echo "${bold}Starting up containers ...${normal}"
+
+options+=" build"
+
+additionalStartOptions+=("-o \"$options\"")
+
 if [ ! -z "$dockerServices" ]; then
   additionalStartOptions+=("-s \"$dockerServices\"")
 fi
-if [ ! -z "$options" ]; then
-  additionalStartOptions+=("-o \"$options\"")
-fi
-startCommand="./start.sh -d --build ${additionalStartOptions[@]}"
+
+startCommand="./start.sh -d ${additionalStartOptions[@]}"
 echo "${bold}Start command: ${startCommand}${normal}"
 eval "$startCommand"
 
