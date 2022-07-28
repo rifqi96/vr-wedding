@@ -68,6 +68,7 @@ do
     grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env
   elif [[ "$arg" = "--sudo" ]]; then
     isSudo=true
+  fi
 done
 
 # Check for options
