@@ -11,6 +11,7 @@ rsa_key_size=4096
 data_path="./nginx/certbot"
 email=${CERTBOT_EMAIL} # Adding a valid address is strongly recommended
 staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+WILDCARD_DOMAIN=false
 
 # Don't set staging status if not in production
 if [[ "$NODE_ENV" = "production" ]]; then
@@ -61,7 +62,17 @@ echo "### Requesting Let's Encrypt certificate for $domains ..."
 domain_args=""
 for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
+  # Check for wildcard domain
+  if [ $WILDCARD_DOMAIN = false ] && [ "$WILDCARD_DOMAIN" == *"*."* ]; then
+    WILDCARD_DOMAIN=true
+  fi
 done
+
+# Add in wildcard domain validation to use TXT
+$wildcard_args=""
+if [ $WILDCARD_DOMAIN = true ];
+  $wildcard_args="--manual --preferred-challenges=dns --server https://acme-v02.api.letsencrypt.org/directory"
+fi
 
 # Select appropriate email arg
 case "$email" in
@@ -77,6 +88,7 @@ docker-compose run --rm --entrypoint "\
     $staging_arg \
     $email_arg \
     $domain_args \
+    $wildcard_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
     --force-renewal" certbot
