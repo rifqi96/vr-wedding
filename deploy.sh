@@ -5,7 +5,6 @@ branch="main"
 additionalStartOptions=()
 dockerServices=""
 options=""
-SSL_INSTALL=false
 
 helpFunction()
 {

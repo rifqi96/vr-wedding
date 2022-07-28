@@ -1,9 +1,6 @@
-FROM nginx:1.23.1-alpine
-
-ARG ENVIRONMENT=${ENVIRONMENT}
+FROM nginx:1.23.1-alpine as builder
 
 ENV PORT 80
-ENV ENVIRONMENT ${ENVIRONMENT}
 ENV WORKDIR /var/www
 ENV ETCDIR .
 ENV CONFDIR /etc/nginx/conf.d
@@ -25,20 +22,26 @@ RUN mkdir -p /var/log/nginx
 # Clear default conf.d content
 RUN rm -rf ${CONFDIR}/*
 
-# Override the default.conf nginx file
-RUN if [[ $ENVIRONMENT = "production" ]] || [[ $ENVIRONMENT = "staging" ]]; then \
-        if [[ $SSL_INSTALL = true ]]; then \
-            cp ${CONFTMPLDIR}/*.temp.conf ;\
-        else \
-            cp ${CONFTMPLDIR}/* ${CONFDIR}/ && \
-            rm -rf ${CONFDIR}/*.local.conf ;\
-        fi \
-    else \
-        cp ${CONFTMPLDIR}/*.local.conf ${CONFDIR}/ ;\
-    fi
+FROM builder as ssl
 
-# Clear unused conf files
-# RUN rm -rf ${CONFTMPLDIR}
+RUN cp ${CONFTMPLDIR}/*.temp.conf ${CONFDIR}/
+
+EXPOSE ${PORT}
+
+CMD ["nginx", "-g", "daemon off;"]
+
+FROM builder as prod
+
+RUN cp ${CONFTMPLDIR}/* ${CONFDIR}/ && \
+    rm -rf ${CONFDIR}/*.local.conf
+
+EXPOSE ${PORT}
+
+CMD ["nginx", "-g", "daemon off;"]
+
+FROM builder as local
+
+RUN cp ${CONFTMPLDIR}/*.local.conf ${CONFDIR}/
 
 EXPOSE ${PORT}
 

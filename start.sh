@@ -10,6 +10,7 @@ dockerArgs=()
 isSudo=false
 dockerServices=(node-backend postgres node-cms node-frontend nginx certbot)
 options=""
+SSL_INSTALL=false
 
 echo "${bold}Running ...${normal}"
 
@@ -25,7 +26,7 @@ helpFunction()
    echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
    echo -e "\t-o Options:"
    echo -e "\t\t build \tre-build everything if changes detected."
-   echo -e "\t\t ssl-i \tInstall SSL mode."
+   echo -e "\t\t ssl \tInstall SSL mode."
    echo -e "\t\t force-i \tForce set FORCE_COMPOSER_INSTALL to true."
    echo -e "\t\t sudo \tRun as superuser."
    echo -e "\t-h Display help"
@@ -48,16 +49,6 @@ if [[ $isD = true ]]; then
   dockerArgs+=('-d')
 fi
 
-if [[ $NODE_ENV = "prod" ]] || [[ $NODE_ENV = "production" ]] || [[ $NODE_ENV = "staging" ]]; then
-  echo "${bold}Running production${normal}"
-  # Merge with docker-compose.prod.yml
-  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.prod.yml"
-else
-  echo "${bold}Running local${normal}"
-  # Merge with docker-compose.local.yml
-  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.local.yml"
-fi
-
 # Check for options
 for arg in "${options[@]}"
 do
@@ -65,12 +56,26 @@ do
     *build* ) dockerArgs+=('--build') ;;
     *force-i* ) grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env ;;
     *sudo* ) isSudo=true ;;
-    *ssl-i* ) export SSL_INSTALL=true ;;
+    *ssl* ) SSL_INSTALL=true ;;
     ? )
       echo "No valid options"
       helpFunction ;;
   esac
 done
+
+if [[ $NODE_ENV = "prod" ]] || [[ $NODE_ENV = "production" ]] || [[ $NODE_ENV = "staging" ]]; then
+  if [ $SSL_INSTALL = true ]; then
+    dockerUpCmd+=" -f docker-compose.yml -f docker-compose.ssl.yml"
+  else
+    echo "${bold}Running production${normal}"
+    # Merge with docker-compose.prod.yml
+    dockerUpCmd+=" -f docker-compose.yml -f docker-compose.prod.yml"
+  fi
+else
+  echo "${bold}Running local${normal}"
+  # Merge with docker-compose.local.yml
+  dockerUpCmd+=" -f docker-compose.yml -f docker-compose.local.yml"
+fi
 
 # add 'up' to docker-compose command
 dockerUpCmd+=" up"
