@@ -2,7 +2,7 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 
 branch="main"
-additionalStartOptions=()
+additionalStartOptions=""
 dockerServices=""
 SSL_INSTALL=false
 
@@ -56,11 +56,11 @@ yes | git pull origin $branch
 # Start and rebuild containers
 echo "${bold}Starting up containers ...${normal}"
 if [ ! -z "$dockerServices" ]; then
-   additionalStartOptions+=("-s \"$dockerServices\"")
+   additionalStartOptions+="-s \"$dockerServices\""
 elif [ SSL_INSTALL = true ]; then
-   additionalStartOptions+=("--ssl-i")
+   additionalStartOptions+="--ssl-i"
 fi
-startCommand="./start.sh -d --build ${additionalStartOptions[@]}"
+startCommand="./start.sh -d --build ${additionalStartOptions}"
 echo "${bold}Start command: ${startCommand}${normal}"
 eval "$startCommand"
 
