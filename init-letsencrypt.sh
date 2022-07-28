@@ -63,7 +63,7 @@ domain_args=""
 for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
   # Check for wildcard domain
-  if [ $WILDCARD_DOMAIN = false ] && [ "$WILDCARD_DOMAIN" == *"*."* ]; then
+  if [ $WILDCARD_DOMAIN = false ] && [ "$domain" == *"*."* ]; then
     WILDCARD_DOMAIN=true
   fi
 done
@@ -95,7 +95,7 @@ certonly_cmd="\
 "
 
 echo "Running $certonly_cmd"
-docker-compose run --rm --entrypoint $certonly_cmd certbot
+docker-compose run --rm --entrypoint "$certonly_cmd" certbot
 echo
 
 echo "### Reloading nginx ..."
