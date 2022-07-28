@@ -41,11 +41,11 @@ echo "${bold}Shutting down containers ...${normal}"
 ./stop.sh
 
 # Make sure no conflicting files
-# git stash
+git stash
 
 # Fetch from the repo
 echo "${bold}Fetching from $branch ...${normal}"
-# yes | git pull origin $branch
+yes | git pull origin $branch
 
 # Start and rebuild containers
 echo "${bold}Starting up containers ...${normal}"
