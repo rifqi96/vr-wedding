@@ -9,6 +9,7 @@ dockerUpCmd="docker-compose"
 dockerArgs=()
 isSudo=false
 dockerServices=(node-backend postgres node-cms node-frontend nginx certbot)
+options=""
 
 echo "${bold}Running ...${normal}"
 
@@ -24,16 +25,18 @@ helpFunction()
    echo -e "\t-s The name of the docker services to run. If it's left empty, it will use the default dockerServices."
    echo -e "\t--build re-build everything if changes detected."
    echo -e "\t--force-i Force set FORCE_COMPOSER_INSTALL to true."
-   echo -e "\t--ssl-i Install SSL mode."
+   echo -e "\t-o Options:"
+   echo -e "\t\t ssl \tInstall SSL mode."
    echo -e "\t-h Display help"
    exit 1 # Exit script after printing help
 }
 
-while getopts ":dhs:" opt
+while getopts ":dhs:o:" opt
 do
    case "$opt" in
       d ) isD=true ;;
       s ) dockerServices=($OPTARG) ;;
+      o ) options=($OPTARG) ;;
       h ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -65,10 +68,15 @@ do
     grep -qF 'FORCE_NPM_I' .env || echo 'FORCE_NPM_I=true' >> .env
   elif [[ "$arg" = "--sudo" ]]; then
     isSudo=true
-  elif [[ "$arg" = "--ssl-i" ]]; then
-    export SSL_INSTALL=true
-  fi
 done
+
+# Check for options
+case "$options" in
+  *ssl* ) export SSL_INSTALL=true ;;
+  * )
+    echo "No valid options"
+    helpFunction ;;
+esac
 
 # add 'up' to docker-compose command
 dockerUpCmd+=" up"
