@@ -25,7 +25,15 @@
     color:#b6e9ff;
 }
 .logo{
-    margin-top: 30px;
+    /* margin-top: 30px; */
+    padding: 15px 0;
+    height: 94px;
+    text-align-last: center;
+}
+
+.logo img {
+    height: 100%;
+    width: auto;
 }
 
 .logo h2 a{

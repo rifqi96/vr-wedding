@@ -11,11 +11,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const className = scroll > 80 ? "fixed-navbar animated fadeInDown active" : "fixed-navbar";
+  const isActive = scroll > 80;
+  const className = isActive ? "fixed-navbar animated fadeInDown active" : "fixed-navbar";
 
   return (
     <div className={className}>
-        <Header />
+        <Header isActive={isActive} />
     </div>
   ); 
 }
