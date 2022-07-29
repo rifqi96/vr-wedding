@@ -1,5 +1,7 @@
 # Tail node
 # tail -f /dev/null
+# Temp fix for eslint error
+export SKIP_PREFLIGHT_CHECK=true
 
 # Run server
 if [ "$NODE_ENV" = "production" ]; then
